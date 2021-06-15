@@ -1,9 +1,7 @@
 // https://dev.to/rxjs/fetching-data-in-react-with-rxjs-and-lt-gt-fragment-54h7
 // https://stackblitz.com/edit/react-fetch-rxjs-hook?file=lib.ts
 
-import React, { useState, useEffect } from 'react';
 import { getUsers, useObservable } from '../api/api_with_RxJS';
-
 
 
 const Login2 = () => {
