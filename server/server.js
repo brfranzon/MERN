@@ -39,16 +39,19 @@ app.get('/users/:id', (req, res) => {
 // create new user
 app.post('/users/add', (req, res) => {
   const req_username = req.body.username;
-  const newUser = new User({ username: req_username });
+  const req_psw = req.body.password;
+  const newUser = new User({ username: req_username, password: req_psw });
   newUser.save().then(() => res.json('User added!')).catch(err => res.status(400).json('Error: ' + err));
 });
 
 // update already exiting user
 app.post('/users/update/:id', (req, res) => {
   const req_username = req.body.username;
+  const req_psw = req.body.password;
   User.findById(req.params.id)
     .then(user => {
       user.username = req_username;
+      user.password = req_psw;
       user.save().
         then(() => res.json('User updated!')).
         catch(err => res.status(400).json('Error: ' + err))
@@ -90,20 +93,17 @@ app.post('/exercises/add', (req, res) => {
 
 
 // update already exiting exercise
-app.post('/exercises/update/:id', (req, res)=>{
- 
+app.post('/exercises/update/:id', (req, res) => {
+
   Exercises.findById(req.params.id).
-  then(exercise => {
-    exercise.username  = req.body.username,
-    exercise.description = req.body.description,
-    exercise.duration = req.body.duration,
-    exercise.data = req.body.exercise;
-    
-    // exercise.save(()=> res.json(' Exercise updated'))
-  })
+    then(exercise => {
+      exercise.username = req.body.username,
+        exercise.description = req.body.description,
+        exercise.duration = req.body.duration,
+        exercise.data = req.body.exercise;
 
-
+      // exercise.save(()=> res.json(' Exercise updated'))
+    })
 })
 
-/**************************************************** */
 app.listen(port, () => console.log(`Server running on port ${port}`));
