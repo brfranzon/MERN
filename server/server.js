@@ -41,19 +41,9 @@ app.get('/users/:id', (req, res) => {
 // create new user
 app.post('/users/add', (req, res) => {
   const req_username = req.body.username;
-<<<<<<< HEAD
   const req_psw = req.body.password;
   const newUser = new User({ username: req_username, password: req_psw });
   newUser.save().then(() => res.json('User added!')).catch(err => res.status(400).json('Error: ' + err));
-=======
-  const req_password = req.body.password;
-
-  console.log(req_username, req_password);
-
-  const newUser = new User({ username: req_username, password: req_password });
-
-  newUser.save().then(() => res.json('User added...!')).catch(err => res.status(400).json('Error: ' + err));
->>>>>>> 1cbe947aa285fcbc9888819ead762d5bf82d9beb
 });
 
 // update already exiting user
@@ -106,8 +96,6 @@ app.post('/exercises/add', (req, res) => {
 
 // update already exiting exercise
 app.post('/exercises/update/:id', (req, res) => {
-<<<<<<< HEAD
-=======
 
   Exercises.findById(req.params.id).
     then(exercise => {
@@ -118,7 +106,6 @@ app.post('/exercises/update/:id', (req, res) => {
 
       // exercise.save(()=> res.json(' Exercise updated'))
     })
->>>>>>> 1cbe947aa285fcbc9888819ead762d5bf82d9beb
 
   Exercises.findById(req.params.id).
     then(exercise => {
