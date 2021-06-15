@@ -1,10 +1,10 @@
 import logo from './logo.svg';
 import './App.css';
-import Login from './pages/login';
+import Login_RXJS from './pages/login_with_RxJS.tsx';
 
 function App() {
   return (
-    <Login/>
+    <Login_RXJS />
   );
 }
 
