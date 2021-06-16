@@ -1,10 +1,6 @@
 en:
   translation:
-    welcomePage:
-      headline: Welcome to HIMM2021.
-      subtitle: Ready to travel?
-      btnCheckIn: Check in
-      btnRegistration: Registration
-      btnLogIn: Log in
-
+    loginPage:
+      headline: Login.
+      
       
