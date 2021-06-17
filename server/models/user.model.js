@@ -3,7 +3,8 @@ const Schema = mongoose.Schema;
 
 const userSchema = new Schema({
   username: { type: String },
-  password: { type: String }
+  password: { type: String },
+  token: {type: String}
 },
   { timestamps: true }
 )

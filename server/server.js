@@ -3,8 +3,11 @@ const cors = require('cors');
 
 require('dotenv').config();
 
+const jwt = require('jsonwebtoken');
+
 const app = express();
 const port = process.env.PORT || 5000;
+
 
 app.use(cors());
 app.use(express.json());
@@ -25,24 +28,65 @@ db.once('open', () => console.log('Mongo DB connection established...!'))
 
 
 //******************* Routes ****************************/
+// protected route
+app.get('/login', (req, res) => {
+  res.json({
+    test: "my protected route"
+  })
+})
 
-// get users
+
+// get users - protected
 app.get('/users', (req, res) => {
 
   console.log('users...')
   User.find().then(users => res.json(users)).catch(err => res.status(400).json('Err: ' + err));
 });
 
+
 // get by id
-app.get('/users/:id', (req, res) => {
-  User.findById(req.params.id).then(user => res.json(user)).catch(err => res.status(400).json('Err: ' + err));
+app.get('/users/:id', ensureToken, (req, res) => {
+
+  // 2. check -> verify the user token
+  jwt.verify(req.token, 'my_top_secret', (err, data) => {
+    if (err) {
+      res.json({ error: 'False token' })
+    } else {
+      //res.json({ text: 'token valid' });
+      User.findById(req.params.id).then(user => res.json(user)).catch(err => res.status(400).json('Err: ' + err));
+    }
+  })
+
 });
 
-// create new user
+// 1. check -> if there is a token
+function ensureToken(req, res, next) {
+  console.log('header', req)
+  const bearerHeader = req.headers['authorization'];
+
+  if (typeof bearerHeader !== 'undefined') {
+    const bearer = bearerHeader.split(" ");
+    const bearerToken = bearer[1];
+    req.token = bearerToken;
+    next();
+  } else {
+    //res.sendStatus(403);
+    res.json({error: 'you should enter a token: forbidden!'})
+  }
+}
+
+
+// create new user 
 app.post('/users/add', (req, res) => {
+
+  // O. step -> create a token
+  const my_token = jwt.sign({ username: req.body.username, password: req.body.password }, 'my_top_secret');
+  console.log(my_token);
+
   const req_username = req.body.username;
   const req_psw = req.body.password;
-  const newUser = new User({ username: req_username, password: req_psw });
+  const newUser = new User({ username: req_username, password: req_psw, token: my_token });
+
   newUser.save().then(() => res.json('User added!')).catch(err => res.status(400).json('Error: ' + err));
 });
 

@@ -33,9 +33,7 @@ const useStyles = makeStyles(theme => ({
 }));
 
 
-
 const MyButton = ({ children, onClickMe, type, status }: Props) => {
-
   const classes = useStyles();
 
   return (

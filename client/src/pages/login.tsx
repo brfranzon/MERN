@@ -1,8 +1,10 @@
-import { makeStyles } from "@material-ui/core";
 import { useEffect, useState } from "react";
 import { useHistory } from "react-router-dom";
 import { getUser } from "../api/api";
 import MyButton from "../components/button/button";
+import { Box, Button, Input, FormControl, makeStyles, IconButton, InputAdornment, OutlinedInput, Paper, Typography } from '@material-ui/core';
+import { useForm } from 'react-hook-form';
+
 
 const useStyles = makeStyles(theme => ({
   container: {
@@ -29,6 +31,61 @@ const useStyles = makeStyles(theme => ({
     flexDirection: "column",
     width: 300,
     padding: 20
+  },
+  Paper: {
+    padding: theme.spacing(8, 8, 10, 8),
+    display: 'flex',
+    flexDirection: 'column',
+    textAlign: 'center',
+    maxWidth: 800,
+  },
+  headline: {
+    paddingBottom: theme.spacing(4),
+  },
+  FormControl: {
+    marginTop: theme.spacing(2),
+  },
+  Input: {
+    width: 400,
+  },
+  submitBtn: {
+    marginTop: theme.spacing(8),
+  },
+  emailCheckIcon: {
+    color: theme.palette.flashy.main,
+  },
+  pwIcon: {
+    color: theme.palette.text.secondary,
+    cursor: 'pointer',
+  },
+  authError: {
+    marginTop: theme.spacing(2),
+  },
+  confirmationIcon: {
+    width: 64,
+    margin: 'auto',
+  },
+  marginTop2: {
+    marginTop: theme.spacing(2),
+  },
+  marginTop10: {
+    marginTop: theme.spacing(10),
+  },
+  forgotPassContainer: {
+    marginTop: theme.spacing(2),
+    textAlign: 'right',
+  },
+  forgotPass: {
+    textDecoration: 'underline',
+    '&:hover': {
+      cursor: 'pointer',
+    },
+    color: 'unset',
+  },
+  input:{
+    border: "1px solid",
+    marginBottom: 8,
+    borderRadius: 30
   }
 }));
 
@@ -41,7 +98,7 @@ type LoginProps = {
   isLoggedIn: (param: boolean) => any;
 }
 
-const Login = ({isLoggedIn}: LoginProps) => {
+const Login = ({ isLoggedIn }: LoginProps) => {
 
   const classes = useStyles();
 
@@ -73,7 +130,7 @@ const Login = ({isLoggedIn}: LoginProps) => {
     console.log(userDB);
     if (userDB.filter((el: any) => el.username === formData.username).length > 0) {
       setIsLogin(true);
-      isLoggedIn(true); 
+      isLoggedIn(true);
       history.push('/hub')
     }
     setIsLogin(false);
@@ -81,24 +138,43 @@ const Login = ({isLoggedIn}: LoginProps) => {
   }
 
   return (
-    <div className={classes.container}>
+    <form onSubmit={handleSubmit} className={classes.container}>
+      <Box display="flex" flexDirection="column" justifyContent="center" alignItems="center">
 
-      <form className={classes.form} onSubmit={handleSubmit}>
+        <Paper elevation={8} className={classes.Paper}>
+          <div className={classes.headline}>
+            <Typography variant="h3" align="center">
+              {'forms.login.headline'}
+            </Typography>
+            <Typography variant="subtitle2" color="textSecondary" align="center">
+              {'forms.login.subtitle'}
+            </Typography>
+          </div>
 
-        <input placeholder="name" name="username" value={formData.username} onChange={handleChangeInput} />
-        <input placeholder="password" name="password" value={formData.password} onChange={handleChangeInput} />
+          <Input className={classes.input} placeholder="name" name="username" value={formData.username} onChange={handleChangeInput} />
+          <Input className={classes.input} placeholder="password" type="password" name="password" value={formData.password} onChange={handleChangeInput} />
 
-        <MyButton
-          onClickMe={(e) => handleSubmit(e)}
-          type="submit"
-          status="enabled"
-        >
-          Submit
-        </MyButton>
-      </form>
-    </div>
+          <div style={{ display: "flex", justifyContent: "space-between" }}>
+            <MyButton
+              onClickMe={(e) => handleSubmit(e)}
+              type="submit"
+              status="enabled"
+            >
+              Login
+            </MyButton>
+            <MyButton
+              onClickMe={(e) => handleSubmit(e)}
+              type="submit"
+              status="disabled"
+            >
+              Register
+            </MyButton>
+          </div>
+
+        </Paper>
+      </Box>
+    </form>
   );
-
 }
 
 export default Login;
