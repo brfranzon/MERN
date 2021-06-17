@@ -52,7 +52,8 @@ app.get('/users/:id', ensureToken, (req, res) => {
     if (err) {
       res.json({ error: 'False token' })
     } else {
-      //res.json({ text: 'token valid' });
+
+      //  res.json({ myTokenIsOK: req.token });
       User.findById(req.params.id).then(user => res.json(user)).catch(err => res.status(400).json('Err: ' + err));
     }
   })
@@ -71,7 +72,7 @@ function ensureToken(req, res, next) {
     next();
   } else {
     //res.sendStatus(403);
-    res.json({error: 'you should enter a token: forbidden!'})
+    res.json({ error: 'you should enter a token/auth in the header: forbidden!' })
   }
 }
 
@@ -79,15 +80,22 @@ function ensureToken(req, res, next) {
 // create new user 
 app.post('/users/add', (req, res) => {
 
-  // O. step -> create a token
-  const my_token = jwt.sign({ username: req.body.username, password: req.body.password }, 'my_top_secret');
-  console.log(my_token);
-
   const req_username = req.body.username;
   const req_psw = req.body.password;
-  const newUser = new User({ username: req_username, password: req_psw, token: my_token });
+  const newUser = new User({ username: req_username, password: req_psw });
 
-  newUser.save().then(() => res.json('User added!')).catch(err => res.status(400).json('Error: ' + err));
+  newUser.save().
+    then(
+      () => {
+        // res.json('User added!')
+        // O. step -> create a token
+        const mytoken = jwt.sign({ username: req.body.username, password: req.body.password }, 'my_top_secret');
+        // res.header('auth-token', mytoken);
+        res.json({ myTokenSecret: mytoken, userAdded: 'YES!' });
+      }
+    ).catch(err => res.status(400).json('Error: ' + err));
+
+
 });
 
 // update already exiting user

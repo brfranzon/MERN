@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useHistory } from "react-router-dom";
-import { getUser } from "../api/api";
+import { createNewUser, getUser, getUserByID } from "../api/api";
 import MyButton from "../components/button/button";
 import { Box, Button, Input, FormControl, makeStyles, IconButton, InputAdornment, OutlinedInput, Paper, Typography } from '@material-ui/core';
 import { useForm } from 'react-hook-form';
@@ -82,7 +82,7 @@ const useStyles = makeStyles(theme => ({
     },
     color: 'unset',
   },
-  input:{
+  input: {
     border: "1px solid",
     marginBottom: 8,
     borderRadius: 30
@@ -128,52 +128,70 @@ const Login = ({ isLoggedIn }: LoginProps) => {
   const handleSubmit = (e: any) => {
     e.preventDefault();
     console.log(userDB);
-    if (userDB.filter((el: any) => el.username === formData.username).length > 0) {
+
+    const matchUser: any[] = userDB.filter((el: any) => el.username === formData.username);
+    if (matchUser.length > 0) {
+
+      console.log('matchUser', matchUser);
+
+      getUserByID(matchUser[0]._id).then(res => console.log('res:', res)).catch(err => console.log(err));
       setIsLogin(true);
       isLoggedIn(true);
       history.push('/hub')
     }
+
     setIsLogin(false);
     return alert('User NOT in der DB');
   }
 
   return (
-    <form onSubmit={handleSubmit} className={classes.container}>
-      <Box display="flex" flexDirection="column" justifyContent="center" alignItems="center">
+    <>
+      <form onSubmit={handleSubmit} className={classes.container}>
+        <Box display="flex" flexDirection="column" justifyContent="center" alignItems="center">
 
-        <Paper elevation={8} className={classes.Paper}>
-          <div className={classes.headline}>
-            <Typography variant="h3" align="center">
-              {'forms.login.headline'}
-            </Typography>
-            <Typography variant="subtitle2" color="textSecondary" align="center">
-              {'forms.login.subtitle'}
-            </Typography>
-          </div>
+          <Paper elevation={8} className={classes.Paper}>
+            <div className={classes.headline}>
+              <Typography variant="h3" align="center">
+                {'forms.login.headline'}
+              </Typography>
+              <Typography variant="subtitle2" color="textSecondary" align="center">
+                {'forms.login.subtitle'}
+              </Typography>
+            </div>
 
-          <Input className={classes.input} placeholder="name" name="username" value={formData.username} onChange={handleChangeInput} />
-          <Input className={classes.input} placeholder="password" type="password" name="password" value={formData.password} onChange={handleChangeInput} />
+            <Input className={classes.input} placeholder="name" name="username" value={formData.username} onChange={handleChangeInput} />
+            <Input className={classes.input} placeholder="password" type="password" name="password" value={formData.password} onChange={handleChangeInput} />
 
-          <div style={{ display: "flex", justifyContent: "space-between" }}>
-            <MyButton
-              onClickMe={(e) => handleSubmit(e)}
-              type="submit"
-              status="enabled"
-            >
-              Login
-            </MyButton>
-            <MyButton
-              onClickMe={(e) => handleSubmit(e)}
-              type="submit"
-              status="disabled"
-            >
-              Register
-            </MyButton>
-          </div>
+            <div style={{ display: "flex", justifyContent: "space-between" }}>
+              <MyButton
+                onClickMe={(e) => handleSubmit(e)}
+                type="submit"
+                status="enabled"
+              >
+                Login
+              </MyButton>
+              <MyButton
+                onClickMe={() => {
+                  console.log(formData)
+                  createNewUser(formData).then(
+                    res => console.log(res)
+                  ).catch(
+                    err => console.log(err)
+                  )
 
-        </Paper>
-      </Box>
-    </form>
+                }}
+                type="submit"
+                status="disabled"
+              >
+                Register
+              </MyButton>
+            </div>
+
+          </Paper>
+        </Box>
+      </form>
+
+    </>
   );
 }
 
