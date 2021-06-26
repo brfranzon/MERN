@@ -15,3 +15,9 @@ export const getUserByID = (id: any) => {
 export const createNewUser = (data: any) => {
   return axios.post('http://localhost:5000/users/add', data);
 }
+
+
+// get authorizided user
+export const userTokenVerified = () => {
+  return axios.get('http://localhost:5000/userTokenVerified');
+}

@@ -17,7 +17,7 @@ app.use(express.json());
 const mongoose = require('mongoose');
 const User = require('./models/user.model');
 const Exercises = require('./models/exercise.model');
-const { exists } = require('./models/user.model');
+const UsersAuthJwt = require('./models/authUsers');
 const uri = process.env.ATLAS_URI;
 mongoose.connect(uri, { useNewUrlParser: true, useCreateIndex: true });
 
@@ -38,9 +38,10 @@ app.get('/login', (req, res) => {
 
 // get users - protected
 app.get('/users', (req, res) => {
-
-  console.log('users...')
-  User.find().then(users => res.json(users)).catch(err => res.status(400).json('Err: ' + err));
+  console.log('get user')
+  User.find().
+    then(users => res.json(users)).
+    catch(err => res.status(400).json('Err: ' + err));
 });
 
 
@@ -79,19 +80,26 @@ function ensureToken(req, res, next) {
 
 // create new user 
 app.post('/users/add', (req, res) => {
-
   const req_username = req.body.username;
   const req_psw = req.body.password;
+
   const newUser = new User({ username: req_username, password: req_psw });
 
+  // in der DB save
   newUser.save().
     then(
       () => {
         // res.json('User added!')
         // O. step -> create a token
         const mytoken = jwt.sign({ username: req.body.username, password: req.body.password }, 'my_top_secret');
-        // res.header('auth-token', mytoken);
-        res.json({ myTokenSecret: mytoken, userAdded: 'YES!' });
+
+        // now save the username and the token in a another collections
+        newAuthUser = new UsersAuthJwt({ userId: req.body.username, token: mytoken });
+        newAuthUser.save().
+          then(() => res.json({ newUserAuthSaved: 'YES!' })).
+          catch(err => console.log('new auth user not saved'));
+
+
       }
     ).catch(err => res.status(400).json('Error: ' + err));
 
@@ -116,6 +124,24 @@ app.post('/users/update/:id', (req, res) => {
 app.delete('/users/:id', (req, res) => {
   User.findByIdAndDelete(req.params.id).then(() => res.json('User deleted!')).catch(err => res.status(400).json('Error: ' + err));
 });
+
+
+// GET THE USER THAT I ALREADY AUTHENTICATED WITH JWT
+app.get('/userTokenVerified', (req, res) => {
+  UsersAuthJwt.find().then(users => res.json(users)).catch(err => console.log(err));
+});
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

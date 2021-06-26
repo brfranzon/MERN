@@ -1,5 +1,5 @@
 import { CssBaseline, ThemeProvider } from '@material-ui/core';
-import RootPage from './root-page';
+import RootPage from './pages/root-page';
 import myTheme from './theme';
 
 function App() {
