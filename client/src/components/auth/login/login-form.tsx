@@ -1,16 +1,25 @@
 import LoginFormFields from "./login-form-fields";
-import { useState } from "react";
+import { useContext, useState } from "react";
 import { Button, Card, CardActions, CardContent, makeStyles, Typography } from '@material-ui/core'
 import { useForm } from "react-hook-form";
 import { useEffect } from "react";
 import { getUser, userTokenVerified } from "../../../api/api";
+import { authContext } from "../../../context/auth-context";
+import { ROUTES } from "../../../pages/routes";
+import { useHistory } from "react-router-dom";
+
+
 
 type Props = {
-  onUnauthorized: (param: any) => any,
-  onLogin: (res: any) => any
+  onUnauthorized?: (param: any) => any,
+  onLogin?: (res?: any) => any
 }
 
 const LoginForm = ({ onUnauthorized, onLogin }: Props) => {
+
+  const { isAuth, setIsAuth, token, setToken } = useContext(authContext);
+
+  const history = useHistory();
 
   const [formData, setFormData] = useState({
     username: '',
@@ -33,9 +42,6 @@ const LoginForm = ({ onUnauthorized, onLogin }: Props) => {
 
   const handleSubmit = (e: any) => {
     e.preventDefault();
-    // console.log('user data: ', userData);
-    // console.log('userToken: ', userToken);
-    // console.log('formData: ', formData);
 
     const matchUser = userData?.filter(
       (el: any) => el.username === formData.username &&
@@ -49,11 +55,16 @@ const LoginForm = ({ onUnauthorized, onLogin }: Props) => {
     console.log(matchUser, matchUserToken);
 
     if (matchUser.length > 0 && matchUserToken.length > 0) {
-      onUnauthorized(false)
-      onLogin(matchUser);
-      return console.log('user found: ', matchUser);
+      //onUnauthorized(false)
+      //onLogin();
+      setIsAuth(true);
+      setToken(true)
+      console.log('my token generted!', matchUserToken.token)
+      history.replace(ROUTES.hub);
+      // return console.log('user found: ', matchUser);
     } else {
-      return onUnauthorized(true);
+      return setIsAuth(false);
+      ;
     }
   }
 
@@ -70,6 +81,7 @@ const LoginForm = ({ onUnauthorized, onLogin }: Props) => {
 
     <form>
 
+      <h1>Login Form</h1>
       <LoginFormFields inputValues={inputs => (console.log(inputs), setFormData(inputs))} />
 
       <Button

@@ -1,9 +1,15 @@
-import { useState } from "react";
+import { useContext, useState } from "react";
+import { useHistory } from "react-router-dom";
 import LoginForm from "../../components/auth/login/login-form"
+import { authContext } from "../../context/auth-context";
+import { ROUTES } from "../routes";
 
 const LoginPage = () => {
 
   const [unAuthorized, setunAuthorized] = useState(false);
+  const history = useHistory();
+
+  const { isAuth, setIsAuth } = useContext(authContext);
 
 
   return <>
@@ -18,16 +24,10 @@ const LoginPage = () => {
       <h1 style={{ color: 'magenta', position: 'absolute', top: 0 }}> Login Page</h1>
 
       <LoginForm
-        onUnauthorized={param => setunAuthorized(param)
-        }
-        onLogin={user => console.log(user)}
+        // onUnauthorized={param => setunAuthorized(param)}
+        // onLogin={() => history.replace(ROUTES.hub)}
       />
 
-      {unAuthorized &&
-        <div>
-          Nope...
-        </div>
-      }
     </div>
   </>;
 }

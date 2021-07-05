@@ -1,19 +1,41 @@
 import { ROUTES } from "./routes"
-import { BrowserRouter, Route, Switch, useHistory } from "react-router-dom";
+import { BrowserRouter, Route, Switch, useHistory, Redirect } from "react-router-dom";
 import LoginPage from "./auth/login-page";
+import HubPage from "./hub/hub-page";
 
+import { authContext } from "../context/auth-context";
+import { useState } from "react";
 
 export default function RootPage() {
 
- return (
-    <BrowserRouter>
-      <Switch>
+  const [isAuth, setIsAuth] = useState(false);
 
-        <Route path={`${ROUTES.login}`} exact>
-          <LoginPage />
-        </Route>
+  const [token, setToken] = useState(false);
 
-      </Switch>
-    </BrowserRouter>
+  return (
+    <>
+      <BrowserRouter>
+        <Switch>
+
+          <authContext.Provider value={{ isAuth, setIsAuth, token, setToken }}>
+            <Route path={`${ROUTES.login}`} exact>
+              <LoginPage />
+            </Route>
+
+            <Route path={`${ROUTES.hub}`} exact>
+              {isAuth && <HubPage />}
+              {!isAuth && <Redirect to={ROUTES.login} />}
+            </Route>
+
+          </authContext.Provider>
+
+          <Route path='*'>
+            <div>NOT FOUND</div>
+          </Route>
+
+        </Switch>
+      </BrowserRouter>
+      <h2>token: {token ? 'true' : 'false'}</h2>
+    </>
   );
 }
